@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>WebSocket ES6 Client</title>
+  <style>
+    body { font-family: Arial; padding: 2rem; }
+    #log { white-space: pre-wrap; background: #f0f0f0; padding: 1rem; border-radius: 8px; }
+    input, button { padding: 0.5rem; font-size: 1rem; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>🕸️ WebSocket Client</h1>
+  <input type="text" id="messageInput" placeholder="Type a message..." />
+  <button id="sendBtn">Send</button>
+  <div id="log"></div>
+
+  <script type="module">
+    const socket = new WebSocket('ws://localhost:9000');
+    const log = document.getElementById('log');
+    const input = document.getElementById('messageInput');
+    const button = document.getElementById('sendBtn');
+
+    const appendLog = (text) => {
+      log.textContent += `${text}\n`;
+    };
+
+    socket.addEventListener('open', () => {
+      appendLog('✅ Connected to WebSocket server');
+    });
+
+    socket.addEventListener('message', (event) => {
+      appendLog(`📥 Server: ${event.data}`);
+    });
+
+    socket.addEventListener('close', () => {
+      appendLog('❌ Disconnected from server');
+    });
+
+    button.addEventListener('click', () => {
+      const message = input.value.trim();
+      if (message) {
+        socket.send(message);
+        appendLog(`📤 You: ${message}`);
+        input.value = '';
+      }
+    });
+  </script>
+</body>
+</html>
